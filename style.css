@@ -581,6 +581,206 @@ button:focus-visible,
   background: var(--nav-cta-bg-hover);
 }
 
+/* =============================================
+   GOOEY NAV
+   Metaball pill indicator for the desktop nav.
+   Particle colors stay monochrome to match the palette.
+   ============================================= */
+.svg-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.gooey-nav {
+  --gooey-color-1: var(--color-white);
+  --gooey-color-2: var(--color-gray-100);
+  --gooey-color-3: var(--color-gray-200);
+  --gooey-color-4: var(--color-gray-300);
+  position: relative;
+}
+
+.gooey-nav__list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  z-index: 3;
+}
+
+.gooey-nav__item {
+  position: relative;
+  border-radius: var(--radius-full);
+  transition: color var(--duration-300) var(--ease-out);
+}
+
+.gooey-nav__item .nav__link {
+  display: inline-block;
+  padding: var(--space-2) var(--space-5);
+  transition: color var(--duration-300) var(--ease-out);
+}
+
+.gooey-nav__item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-white);
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity var(--duration-300) var(--ease-out),
+              transform var(--duration-300) var(--ease-out);
+  z-index: -1;
+}
+
+.gooey-nav__item.is-active .nav__link {
+  color: var(--color-gray-950);
+}
+
+.gooey-nav__item.is-active::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.gooey-nav__item:focus-within:has(:focus-visible) {
+  box-shadow: 0 0 0.5px 1.5px var(--color-white);
+}
+
+.gooey-nav__effect {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  opacity: 1;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  z-index: 1;
+}
+
+.gooey-nav__effect--text {
+  color: var(--color-foreground-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--tracking-wide);
+  transition: color var(--duration-300) var(--ease-out);
+}
+
+.gooey-nav__effect--text.is-active {
+  color: var(--color-gray-950);
+}
+
+/* Alpha-channel goo. The CSS blur+contrast variant needs an opaque
+   backdrop, which would paint a black box over the transparent nav. */
+.gooey-nav__effect--filter {
+  filter: url(#gooeyNavFilter);
+}
+
+.gooey-nav__effect--filter::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-white);
+  transform: scale(0);
+  opacity: 0;
+  z-index: -1;
+  border-radius: var(--radius-full);
+}
+
+.gooey-nav__effect--filter.is-active::after {
+  animation: gooeyPill 0.3s ease both;
+}
+
+@keyframes gooeyPill {
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.gooey-nav__particle,
+.gooey-nav__point {
+  display: block;
+  opacity: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
+  transform-origin: center;
+}
+
+.gooey-nav__particle {
+  --time: 5s;
+  position: absolute;
+  top: calc(50% - 8px);
+  left: calc(50% - 8px);
+  animation: gooeyParticle calc(var(--time)) ease 1 -350ms;
+}
+
+.gooey-nav__point {
+  background: var(--color);
+  opacity: 1;
+  animation: gooeyPoint calc(var(--time)) ease 1 -350ms;
+}
+
+@keyframes gooeyParticle {
+  0% {
+    transform: rotate(0deg) translate(calc(var(--start-x)), calc(var(--start-y)));
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+  70% {
+    transform: rotate(calc(var(--rotate) * 0.5)) translate(calc(var(--end-x) * 1.2), calc(var(--end-y) * 1.2));
+    opacity: 1;
+    animation-timing-function: ease;
+  }
+  85% {
+    transform: rotate(calc(var(--rotate) * 0.66)) translate(calc(var(--end-x)), calc(var(--end-y)));
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(calc(var(--rotate) * 1.2)) translate(calc(var(--end-x) * 0.5), calc(var(--end-y) * 0.5));
+    opacity: 1;
+  }
+}
+
+@keyframes gooeyPoint {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+  25% {
+    transform: scale(calc(var(--scale) * 0.25));
+  }
+  38% {
+    opacity: 1;
+  }
+  65% {
+    transform: scale(var(--scale));
+    opacity: 1;
+    animation-timing-function: ease;
+  }
+  85% {
+    transform: scale(var(--scale));
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gooey-nav__effect--filter {
+    display: none;
+  }
+}
+
 .nav__toggle {
   display: none;
   flex-direction: column;

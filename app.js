@@ -67,6 +67,43 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // =============================================
+  // GOOEY NAV
+  // =============================================
+  const gooeyNavEl = document.getElementById('gooeyNav');
+  if (gooeyNavEl) {
+    const gooeyNav = initGooeyNav(gooeyNavEl, {
+      particleCount: 14,
+      particleDistances: [80, 10],
+      particleR: 100,
+      animationTime: 560,
+      timeVariance: 280,
+      initialActiveIndex: -1,
+    });
+
+    // Keep the indicator in sync with the section under the viewport
+    // midpoint. The hero has no nav item, so it resolves to -1 (none active).
+    const navSections = Array.prototype.map.call(
+      gooeyNavEl.querySelectorAll('a[href^="#"]'),
+      (link) => document.querySelector(link.getAttribute('href'))
+    );
+
+    ScrollTrigger.create({
+      start: 0,
+      end: 'max',
+      onUpdate: () => {
+        const mid = window.innerHeight / 2;
+        let index = -1;
+        navSections.forEach((section, i) => {
+          if (!section) return;
+          const rect = section.getBoundingClientRect();
+          if (rect.top <= mid && rect.bottom > mid) index = i;
+        });
+        gooeyNav.setActive(index);
+      },
+    });
+  }
+
+  // =============================================
   // MOBILE TOGGLE
   // =============================================
   const navToggle = document.getElementById('navToggle');

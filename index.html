@@ -18,6 +18,27 @@
   <div class="grid-overlay" aria-hidden="true"></div>
 
   <!-- ============================================
+       GOO FILTER
+       Fuses the nav particles into metaballs. Works on the
+       alpha channel, so unlike the CSS blur+contrast version
+       it needs no opaque backdrop — important here because the
+       nav is transparent over the hero.
+       ============================================ -->
+  <svg class="svg-defs" aria-hidden="true" focusable="false">
+    <defs>
+      <filter id="gooeyNavFilter">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+        <feColorMatrix
+          in="blur"
+          mode="matrix"
+          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9"
+          result="goo" />
+        <feBlend in="SourceGraphic" in2="goo" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- ============================================
        CURSOR
        ============================================ -->
   <div class="cursor" id="cursor"></div>
@@ -29,10 +50,12 @@
   <nav class="nav" id="nav">
     <div class="nav__inner">
       <a href="#" class="nav__logo">LUCAS<span class="nav__logo-dot">.</span></a>
-      <div class="nav__links">
-        <a href="#work" class="nav__link">Work</a>
-        <a href="#about" class="nav__link">About</a>
-        <a href="#contact" class="nav__link nav__link--cta">Contact</a>
+      <div class="nav__links gooey-nav" id="gooeyNav">
+        <ul class="gooey-nav__list">
+          <li class="gooey-nav__item"><a href="#work" class="nav__link">Work</a></li>
+          <li class="gooey-nav__item"><a href="#about" class="nav__link">About</a></li>
+          <li class="gooey-nav__item"><a href="#contact" class="nav__link">Contact</a></li>
+        </ul>
       </div>
       <button class="nav__toggle" id="navToggle" aria-label="Menu">
         <span></span><span></span>
@@ -260,6 +283,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="lib/lenis/lenis.min.js"></script>
   <script src="lib/cursor-grid.js"></script>
+  <script src="lib/gooey-nav.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
