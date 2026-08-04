@@ -1,0 +1,17 @@
+{
+  "name": "lucas-portfolio",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Lucas Musungo — Software Engineer portfolio",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  },
+  "dependencies": {
+    "lenis": "^1.3.25"
+  }
+}

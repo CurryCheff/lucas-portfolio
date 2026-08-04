@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lucas Musungo // Software Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="lib/lenis/lenis.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============================================
+       GRID OVERLAY (ambient)
+       ============================================ -->
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <!-- ============================================
+       CURSOR
+       ============================================ -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-follower" id="cursorFollower"></div>
+
+  <!-- ============================================
+       NAV
+       ============================================ -->
+  <nav class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="#" class="nav__logo">LUCAS<span class="nav__logo-dot">.</span></a>
+      <div class="nav__links">
+        <a href="#work" class="nav__link">Work</a>
+        <a href="#about" class="nav__link">About</a>
+        <a href="#contact" class="nav__link nav__link--cta">Contact</a>
+      </div>
+      <button class="nav__toggle" id="navToggle" aria-label="Menu">
+        <span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="mobile-overlay" id="mobileOverlay">
+    <div class="mobile-overlay__inner">
+      <a href="#work" class="mobile-link">Work</a>
+      <a href="#about" class="mobile-link">About</a>
+      <a href="#contact" class="mobile-link">Contact</a>
+    </div>
+  </div>
+
+  <!-- ============================================
+       HERO
+       ============================================ -->
+  <section class="hero" id="hero">
+    <div class="hero__bg" id="heroBg">
+      <div class="hero__scanline"></div>
+      <div class="cursor-grid" id="cursorGrid"></div>
+    </div>
+    <div class="hero__content">
+      <span class="tech-tag">[ SOFTWARE ENGINEER ]</span>
+      <h1 class="hero__title">
+        <span class="hero__line" data-anim="reveal"><span>Lucas</span></span>
+        <span class="hero__line" data-anim="reveal"><span>Musungo</span></span>
+        <span class="hero__line" data-anim="reveal"><span>builds software</span></span>
+      </h1>
+      <p class="hero__desc">
+        I design and build full‑stack web applications — from brand sites to
+        multi‑store retail dashboards — for real businesses that need
+        software that just works.
+      </p>
+      <div class="hero__actions">
+        <a href="#work" class="btn btn--primary">
+          View projects
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a href="#contact" class="btn btn--ghost">Get in touch →</a>
+      </div>
+    </div>
+    <div class="hero__scroll">
+      <span>Scroll</span>
+      <div class="hero__scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       WORK — BENTO GRID
+       ============================================ -->
+  <section class="work" id="work">
+    <div class="section-header">
+      <span class="tech-tag" data-anim="fade-up">// 01. SELECTED PROJECTS</span>
+      <h2 class="section-title" data-anim="reveal">
+        <span>Recent</span>
+        <span>engagements</span>
+      </h2>
+    </div>
+
+    <div class="bento">
+      <!-- Card 1 — spans 2 cols -->
+      <a href="https://goldenpeacock.vercel.app" target="_blank" rel="noopener" class="bento__card bento__card--wide" data-anim="project">
+        <div class="bento__media">
+          <div class="bento__placeholder bento__placeholder--dark"></div>
+          <div class="bento__tech-badge">Retail / SaaS</div>
+          <div class="bento__corner-label">[ LIVE ]</div>
+        </div>
+        <div class="bento__body">
+          <div class="bento__meta">
+            <span class="bento__hash">#</span>
+            <span class="bento__index">01</span>
+          </div>
+          <div class="bento__info">
+            <h3 class="bento__title">Golden Peacock</h3>
+            <p class="bento__desc">Multi‑store sales dashboard tracking 40+ retail locations across five regions — live sales tracking, product &amp; scheme management, and performance analytics.</p>
+            <span class="bento__cta">View project →</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 2 -->
+      <a href="https://chickenslice.vercel.app" target="_blank" rel="noopener" class="bento__card" data-anim="project">
+        <div class="bento__media">
+          <div class="bento__placeholder bento__placeholder--mid"></div>
+          <div class="bento__tech-badge">Restaurant</div>
+        </div>
+        <div class="bento__body">
+          <div class="bento__meta">
+            <span class="bento__hash">#</span>
+            <span class="bento__index">02</span>
+          </div>
+          <div class="bento__info">
+            <h3 class="bento__title">Chicken Slice</h3>
+            <p class="bento__desc">Brand site for Zimbabwe's favorite crispy chicken restaurant chain.</p>
+            <span class="bento__cta">View project →</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Card 3 -->
+      <a href="https://almainstitute.vercel.app" target="_blank" rel="noopener" class="bento__card" data-anim="project">
+        <div class="bento__media">
+          <div class="bento__placeholder bento__placeholder--light"></div>
+          <div class="bento__tech-badge">Education</div>
+        </div>
+        <div class="bento__body">
+          <div class="bento__meta">
+            <span class="bento__hash">#</span>
+            <span class="bento__index">03</span>
+          </div>
+          <div class="bento__info">
+            <h3 class="bento__title">Alma Institute</h3>
+            <p class="bento__desc">Website for a premier private school in Mutare, Zimbabwe.</p>
+            <span class="bento__cta">View project →</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============================================
+       ABOUT
+       ============================================ -->
+  <section class="about" id="about">
+    <div class="about__inner">
+      <div class="about__visual" data-anim="reveal">
+        <div class="about__terminal">
+          <div class="about__terminal-header">
+            <span class="about__dot about__dot--red"></span>
+            <span class="about__dot about__dot--yellow"></span>
+            <span class="about__dot about__dot--green"></span>
+            <span class="about__terminal-title">lucas — about</span>
+          </div>
+          <div class="about__terminal-body">
+            <span class="about__terminal-line"><span class="about__prompt">$</span> <span class="about__cmd">whoami</span></span>
+            <span class="about__terminal-line about__terminal-line--output">Lucas Musungo — Software Engineer</span>
+            <span class="about__terminal-line"><span class="about__prompt">$</span> <span class="about__cmd">ls -la projects/</span></span>
+            <span class="about__terminal-line about__terminal-line--output">chicken-slice  golden-peacock  alma-institute</span>
+            <span class="about__terminal-line about__terminal-line--cursor"><span class="about__prompt">$</span> <span class="about__cmd--blink">▌</span></span>
+          </div>
+        </div>
+      </div>
+      <div class="about__content">
+        <span class="tech-tag" data-anim="fade-up">// ABOUT</span>
+        <h2 class="section-title section-title--left" data-anim="reveal">
+          <span>I turn</span>
+          <span>ideas into</span>
+          <span>working software</span>
+        </h2>
+        <p class="about__text" data-anim="fade-up">
+          I'm a software engineer who builds full‑stack web applications for
+          real businesses — from restaurant brands and retail dashboards to
+          institutional websites. I care about clean architecture, fast
+          interfaces, and shipping things that actually work in production.
+        </p>
+        <div class="about__tags" data-anim="fade-up">
+          <span class="about__tag">JavaScript</span>
+          <span class="about__tag">React</span>
+          <span class="about__tag">Next.js</span>
+          <span class="about__tag">Tailwind CSS</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       CTA
+       ============================================ -->
+  <section class="cta" id="contact">
+    <div class="cta__bg" id="ctaBg">
+      <div class="cta__grid"></div>
+    </div>
+    <div class="cta__content">
+      <span class="tech-tag" data-anim="fade-up">[ CONTACT ]</span>
+      <h2 class="cta__title" data-anim="reveal">
+        <span>Let's build</span>
+        <span class="cta__title-accent">something</span>
+      </h2>
+      <p class="cta__desc" data-anim="fade-up">
+        Have a project in mind? I'd love to hear about it.
+      </p>
+      <a href="mailto:musungolucas@gmail.com" class="cta__email" data-anim="fade-up">
+        <span class="cta__email-label">send a message</span>
+        <span class="cta__email-addr">musungolucas@gmail.com</span>
+        <svg class="cta__email-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============================================
+       FOOTER
+       ============================================ -->
+  <footer class="footer" id="footer">
+    <div class="footer__inner">
+      <div class="footer__top">
+        <div class="footer__brand">
+          <a href="#" class="footer__logo">LUCAS<span class="footer__logo-dot">.</span></a>
+          <p class="footer__tagline">Software engineer building products that ship.</p>
+        </div>
+        <div class="footer__grid">
+          <div class="footer__col">
+            <span class="footer__col-title">Projects</span>
+            <a href="https://goldenpeacock.vercel.app" target="_blank" rel="noopener">Golden Peacock</a>
+            <a href="https://chickenslice.vercel.app" target="_blank" rel="noopener">Chicken Slice</a>
+            <a href="https://almainstitute.vercel.app" target="_blank" rel="noopener">Alma Institute</a>
+          </div>
+          <div class="footer__col">
+            <span class="footer__col-title">Contact</span>
+            <a href="mailto:musungolucas@gmail.com">musungolucas@gmail.com</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span>&copy; 2026 Lucas Musungo. All rights reserved.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================
+       SCRIPTS
+       ============================================ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="lib/lenis/lenis.min.js"></script>
+  <script src="lib/cursor-grid.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
