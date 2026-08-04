@@ -305,6 +305,24 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // =============================================
+  // DOT FIELD (footer background)
+  // =============================================
+  const dotFieldEl = document.getElementById('dotField');
+  if (dotFieldEl) {
+    initDotField(dotFieldEl, {
+      pointerTarget: document.getElementById('footer'),
+      dotRadius: 1.5,
+      dotSpacing: 16,
+      cursorRadius: 220,
+      bulgeStrength: 46,
+      glowRadius: 140,
+      gradientFrom: 'rgba(255, 255, 255, 0.32)',
+      gradientTo: 'rgba(255, 255, 255, 0.1)',
+      glowColor: 'rgba(255, 255, 255, 0.45)',
+    });
+  }
+
+  // =============================================
   // FOOTER STAGGER
   // =============================================
   document.querySelectorAll('.footer__col').forEach((col, i) => {
