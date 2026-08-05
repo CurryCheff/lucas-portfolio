@@ -56,6 +56,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =============================================
+  // CLICK SPARK
+  // =============================================
+  initClickSpark({
+    sparkColor: '#ffffff',
+    sparkSize: 10,
+    sparkRadius: 18,
+    sparkCount: 8,
+    duration: 400,
+  });
+
+  // =============================================
   // NAV SCROLL
   // =============================================
   const nav = document.getElementById('nav');

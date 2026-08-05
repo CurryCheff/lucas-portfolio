@@ -192,6 +192,7 @@ a {
   --z-dropdown: 100;
   --z-overlay:  99;
   --z-modal:    1000;
+  --z-spark:    9998;
   --z-cursor:   9999;
 
   /* ---- Font Families ---- */
@@ -455,6 +456,18 @@ button:focus-visible,
 .tech-tag:hover {
   border-color: var(--color-border-hover);
   color: var(--color-foreground-secondary);
+}
+
+/* =============================================
+   CLICK SPARK
+   Site-wide canvas overlay; sits above content, below
+   the custom cursor.
+   ============================================= */
+.click-spark__canvas {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-spark);
+  pointer-events: none;
 }
 
 /* =============================================
