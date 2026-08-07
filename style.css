@@ -1149,6 +1149,17 @@ button:focus-visible,
   grid-template-columns: 1.2fr 1fr;
 }
 
+/* Variant: full-width card without the wide card's side-by-side layout —
+   used when an odd number of regular cards would otherwise leave the last
+   one stranded alone in its row. */
+.bento__card--full {
+  grid-column: 1 / -1;
+}
+
+.bento__card--full .bento__media {
+  aspect-ratio: 21 / 9;
+}
+
 .bento__media {
   position: relative;
   overflow: hidden;
@@ -1204,6 +1215,18 @@ button:focus-visible,
       var(--color-white-015) 25px
     ),
     linear-gradient(135deg, var(--color-gray-800) 0%, var(--color-gray-700) 100%);
+}
+
+.bento__placeholder--slate {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 18px,
+      var(--color-white-03) 18px,
+      var(--color-white-03) 19px
+    ),
+    linear-gradient(135deg, var(--color-gray-900) 0%, var(--color-gray-750) 100%);
 }
 
 .bento__tech-badge {
