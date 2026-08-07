@@ -249,6 +249,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // =============================================
+  // SCROLL PREVIEWS (project card screenshots)
+  // =============================================
+  initScrollPreviews();
+
+  // =============================================
   // BENTO CARDS STAGGER
   // =============================================
   document.querySelectorAll('[data-anim="project"]').forEach((card, i) => {

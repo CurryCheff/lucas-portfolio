@@ -1181,6 +1181,30 @@ button:focus-visible,
   transform: scale(1.03);
 }
 
+/* Real screenshot of the live site, sitting above the placeholder gradient
+   (visible underneath during lazy-load, or as a fallback if the image
+   fails). Rendered at its natural tall aspect ratio rather than cropped,
+   so hovering can scroll through it to reveal the rest of the page. */
+.bento__scroll-preview {
+  position: absolute;
+  inset: 0 0 auto 0;
+  width: 100%;
+  height: auto;
+  transform: translateY(0);
+  transition: transform 1800ms var(--ease-out);
+  will-change: transform;
+}
+
+.bento__card:hover .bento__scroll-preview {
+  transform: translateY(calc(-1 * var(--scroll-distance, 0px)));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bento__scroll-preview {
+    transition: none;
+  }
+}
+
 .bento__placeholder--dark {
   background:
     repeating-linear-gradient(
