@@ -1353,6 +1353,33 @@ button:focus-visible,
   font-family: var(--font-mono);
 }
 
+/* Reserved-slot skeleton — no link, no hover lift, no custom-cursor
+   active state (pointer-events:none stops both the CSS :hover and the
+   mouseenter/mouseleave listeners app.js attaches via the .bento__card
+   selector, so it doesn't falsely read as clickable). */
+.bento__card--skeleton {
+  pointer-events: none;
+}
+
+.bento__skeleton-line {
+  height: 0.9rem;
+  border-radius: var(--radius-full);
+  background: var(--color-white-04);
+  margin-bottom: var(--space-2);
+}
+
+.bento__skeleton-line--title {
+  height: 1.5rem;
+  width: 50%;
+  margin-bottom: var(--space-3);
+  background: var(--color-white-06);
+}
+
+.bento__skeleton-line--short {
+  width: 35%;
+  margin-bottom: 0;
+}
+
 .bento__card:hover .bento__cta {
   color: var(--color-foreground-primary);
 }

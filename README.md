@@ -40,9 +40,9 @@ npm run preview
 
 ## Projects featured
 
-- [Golden Peacock](https://goldenpeacock.vercel.app) — multi-store retail sales dashboard
 - [Chicken Slice](https://chickenslice.vercel.app) — restaurant brand site
 - [Alma Institute](https://almainstitute.vercel.app) — private school website
+- [Flame Grill Express](https://flame-grill-express-blond.vercel.app/menu#mains) — personal build, online ordering menu
 
 ## Contact
 

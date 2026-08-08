@@ -118,13 +118,14 @@
     </div>
 
     <div class="bento">
-      <!-- Card 1 — spans 2 cols -->
-      <a href="https://goldenpeacock.vercel.app" target="_blank" rel="noopener" class="bento__card bento__card--wide" data-anim="project">
+      <!-- Card 1 — reserved slot. Previously linked to a "Golden Peacock"
+           demo that turned out not to be Lucas's project — removed rather
+           than left pointing at something unverified. Kept as a skeleton
+           so the grid keeps its wide-card rhythm without reflowing. -->
+      <div class="bento__card bento__card--wide bento__card--skeleton" data-anim="project" aria-hidden="true">
         <div class="bento__media">
           <div class="bento__placeholder bento__placeholder--dark"></div>
-          <img class="bento__scroll-preview" src="images/projects/golden-peacock.jpg" alt="Golden Peacock sales dashboard" loading="lazy" decoding="async" />
-          <div class="bento__tech-badge">Retail / SaaS</div>
-          <div class="bento__corner-label">[ DEMO ]</div>
+          <div class="bento__corner-label">[ RESERVED ]</div>
         </div>
         <div class="bento__body">
           <div class="bento__meta">
@@ -132,12 +133,12 @@
             <span class="bento__index">01</span>
           </div>
           <div class="bento__info">
-            <h3 class="bento__title">Golden Peacock</h3>
-            <p class="bento__desc">Multi‑store sales dashboard tracking 40+ retail locations across five regions — live sales tracking, product &amp; scheme management, and performance analytics.</p>
-            <span class="bento__cta">View project →</span>
+            <div class="bento__skeleton-line bento__skeleton-line--title"></div>
+            <div class="bento__skeleton-line"></div>
+            <div class="bento__skeleton-line bento__skeleton-line--short"></div>
           </div>
         </div>
-      </a>
+      </div>
 
       <!-- Card 2 -->
       <a href="https://chickenslice.vercel.app" target="_blank" rel="noopener" class="bento__card" data-anim="project">
@@ -218,7 +219,7 @@
             <span class="about__terminal-line"><span class="about__prompt">$</span> <span class="about__cmd">whoami</span></span>
             <span class="about__terminal-line about__terminal-line--output">Lucas Musungo — Software Engineer</span>
             <span class="about__terminal-line"><span class="about__prompt">$</span> <span class="about__cmd">ls -la projects/</span></span>
-            <span class="about__terminal-line about__terminal-line--output">chicken-slice  golden-peacock  alma-institute  flame-grill-express</span>
+            <span class="about__terminal-line about__terminal-line--output">chicken-slice  alma-institute  flame-grill-express</span>
             <span class="about__terminal-line about__terminal-line--cursor"><span class="about__prompt">$</span> <span class="about__cmd--blink">▌</span></span>
           </div>
         </div>
@@ -325,7 +326,6 @@
         <div class="footer__grid">
           <div class="footer__col">
             <span class="footer__col-title">Projects</span>
-            <a href="https://goldenpeacock.vercel.app" target="_blank" rel="noopener">Golden Peacock</a>
             <a href="https://chickenslice.vercel.app" target="_blank" rel="noopener">Chicken Slice</a>
             <a href="https://almainstitute.vercel.app" target="_blank" rel="noopener">Alma Institute</a>
             <a href="https://flame-grill-express-blond.vercel.app/menu#mains" target="_blank" rel="noopener">Flame Grill Express</a>
