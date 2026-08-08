@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lucas Musungo // Software Engineer</title>
+  <title>Overboard — led by Lucas // Software Studio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -49,7 +49,7 @@
        ============================================ -->
   <nav class="nav" id="nav">
     <div class="nav__inner">
-      <a href="#" class="nav__logo">LUCAS<span class="nav__logo-dot">.</span></a>
+      <a href="#" class="nav__logo">OVERBOARD<span class="nav__logo-dot">.</span></a>
       <div class="nav__links gooey-nav" id="gooeyNav">
         <ul class="gooey-nav__list">
           <li class="gooey-nav__item"><a href="#work" class="nav__link">Work</a></li>
@@ -80,7 +80,7 @@
       <div class="cursor-grid" id="cursorGrid"></div>
     </div>
     <div class="hero__content">
-      <span class="tech-tag">[ SOFTWARE ENGINEER ]</span>
+      <span class="tech-tag">[ OVERBOARD — LED BY LUCAS ]</span>
       <h1 class="hero__title">
         <span class="hero__line" data-anim="reveal"><span>Lucas</span></span>
         <span class="hero__line" data-anim="reveal"><span>Musungo</span></span>
@@ -124,7 +124,7 @@
           <div class="bento__placeholder bento__placeholder--dark"></div>
           <img class="bento__scroll-preview" src="images/projects/golden-peacock.jpg" alt="Golden Peacock sales dashboard" loading="lazy" decoding="async" />
           <div class="bento__tech-badge">Retail / SaaS</div>
-          <div class="bento__corner-label">[ LIVE ]</div>
+          <div class="bento__corner-label">[ DEMO ]</div>
         </div>
         <div class="bento__body">
           <div class="bento__meta">
@@ -153,7 +153,7 @@
           </div>
           <div class="bento__info">
             <h3 class="bento__title">Chicken Slice</h3>
-            <p class="bento__desc">Brand site for Zimbabwe's favorite crispy chicken restaurant chain.</p>
+            <p class="bento__desc">Multi‑page brand site for a Zimbabwean chicken restaurant chain — menu and product catalog with online ordering and cart. Built in 2–4 weeks.</p>
             <span class="bento__cta">View project →</span>
           </div>
         </div>
@@ -173,7 +173,7 @@
           </div>
           <div class="bento__info">
             <h3 class="bento__title">Alma Institute</h3>
-            <p class="bento__desc">Website for a premier private school in Mutare, Zimbabwe.</p>
+            <p class="bento__desc">Multi‑page website for a private school in Mutare, Zimbabwe, including admissions and enrollment information. Built in 1–2 weeks.</p>
             <span class="bento__cta">View project →</span>
           </div>
         </div>
@@ -184,7 +184,7 @@
         <div class="bento__media">
           <div class="bento__placeholder bento__placeholder--slate"></div>
           <img class="bento__scroll-preview" src="images/projects/flame-grill-express.jpg" alt="Flame Grill Express online menu" loading="lazy" decoding="async" />
-          <div class="bento__tech-badge">Food Ordering</div>
+          <div class="bento__tech-badge bento__tech-badge--personal">Personal Build</div>
         </div>
         <div class="bento__body">
           <div class="bento__meta">
@@ -193,7 +193,7 @@
           </div>
           <div class="bento__info">
             <h3 class="bento__title">Flame Grill Express</h3>
-            <p class="bento__desc">Online ordering platform for a flame-grilled peri-peri restaurant — browse the menu by category, add items to your cart, and checkout in seconds.</p>
+            <p class="bento__desc">Menu browsable by category, full cart and checkout flow, and a location/hours page. Built in under a week.</p>
             <span class="bento__cta">View project →</span>
           </div>
         </div>
@@ -231,16 +231,31 @@
           <span>working software</span>
         </h2>
         <p class="about__text" data-anim="fade-up">
-          I'm a software engineer who builds full‑stack web applications for
-          real businesses — from restaurant brands and retail dashboards to
-          institutional websites. I care about clean architecture, fast
-          interfaces, and shipping things that actually work in production.
+          I'm a software engineer, and I lead Overboard — a small studio
+          building full‑stack web applications for real businesses and
+          institutions, from restaurant brands and retail dashboards to
+          schools. I care about clean architecture, fast interfaces, and
+          shipping things that actually work in production.
         </p>
-        <div class="about__tags" data-anim="fade-up">
-          <span class="about__tag">JavaScript</span>
-          <span class="about__tag">React</span>
-          <span class="about__tag">Next.js</span>
-          <span class="about__tag">Tailwind CSS</span>
+        <div class="about__stack" data-anim="fade-up">
+          <div class="about__stack-group">
+            <span class="about__stack-label">Frontend</span>
+            <div class="about__tags">
+              <span class="about__tag">JavaScript</span>
+              <span class="about__tag">React</span>
+              <span class="about__tag">Next.js</span>
+              <span class="about__tag">Tailwind CSS</span>
+            </div>
+          </div>
+          <div class="about__stack-group">
+            <span class="about__stack-label">Backend / Infra</span>
+            <div class="about__tags">
+              <span class="about__tag">Supabase</span>
+              <span class="about__tag">Vercel</span>
+              <span class="about__tag">AI/agent integrations</span>
+              <span class="about__tag">AI chatbots</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -262,11 +277,37 @@
       <p class="cta__desc" data-anim="fade-up">
         Have a project in mind? I'd love to hear about it.
       </p>
+
+      <!-- Photo scaffold — no image wired up yet. To add one, drop
+           <img class="cta__avatar-photo-img" src="..." alt="Lucas Musungo" />
+           inside .cta__avatar-photo; object-fit:cover is already set up
+           so it fills the circle correctly with no further CSS changes. -->
+      <div class="cta__avatar" data-anim="fade-up">
+        <div class="cta__avatar-photo" aria-hidden="true">
+          <span class="cta__avatar-initials">LM</span>
+        </div>
+        <span class="cta__avatar-caption">Lucas Musungo · Overboard</span>
+      </div>
+
       <a href="mailto:musungolucas@gmail.com" class="cta__email" data-anim="fade-up">
         <span class="cta__email-label">send a message</span>
         <span class="cta__email-addr">musungolucas@gmail.com</span>
         <svg class="cta__email-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
+
+      <div class="cta__whatsapp" data-anim="fade-up">
+        <span class="cta__whatsapp-label">or message us on WhatsApp</span>
+        <div class="cta__whatsapp-links">
+          <a href="https://wa.me/263773663475?text=Hi%20Lucas%2C%20I%20saw%20the%20Overboard%20portfolio%20and%20want%20to%20talk%20about%20a%20project" target="_blank" rel="noopener" class="btn btn--outline cta__whatsapp-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-11.9 7.8L3 21l1.7-6.1A8.5 8.5 0 1 1 21 11.5Z"/><path d="M8.5 10c.3 2.5 2 4.2 4.5 4.5"/></svg>
+            Lucas
+          </a>
+          <a href="https://wa.me/263753849661?text=Hi%20Tedd%2C%20I%20saw%20the%20Overboard%20portfolio%20and%20want%20to%20talk%20about%20a%20project" target="_blank" rel="noopener" class="btn btn--outline cta__whatsapp-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-11.9 7.8L3 21l1.7-6.1A8.5 8.5 0 1 1 21 11.5Z"/><path d="M8.5 10c.3 2.5 2 4.2 4.5 4.5"/></svg>
+            Tedd
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -278,8 +319,8 @@
     <div class="footer__inner">
       <div class="footer__top">
         <div class="footer__brand">
-          <a href="#" class="footer__logo">LUCAS<span class="footer__logo-dot">.</span></a>
-          <p class="footer__tagline">Software engineer building products that ship.</p>
+          <a href="#" class="footer__logo">OVERBOARD<span class="footer__logo-dot">.</span></a>
+          <p class="footer__tagline">Overboard — led by Lucas. A small studio building products that ship.</p>
         </div>
         <div class="footer__grid">
           <div class="footer__col">
@@ -296,7 +337,7 @@
         </div>
       </div>
       <div class="footer__bottom">
-        <span>&copy; 2026 Lucas Musungo. All rights reserved.</span>
+        <span>&copy; 2026 Overboard — led by Lucas. All rights reserved.</span>
       </div>
     </div>
   </footer>

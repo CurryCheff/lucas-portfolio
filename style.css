@@ -1269,6 +1269,13 @@ button:focus-visible,
   backdrop-filter: blur(8px);
 }
 
+/* Distinguishes personal/practice projects from client work at a glance —
+   dashed border reads as "off the books" without introducing a new color. */
+.bento__tech-badge--personal {
+  border-style: dashed;
+  color: var(--color-foreground-secondary);
+}
+
 .bento__corner-label {
   position: absolute;
   bottom: var(--space-3);
@@ -1669,6 +1676,26 @@ button:focus-visible,
   font-weight: var(--font-weight-light);
 }
 
+.about__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.about__stack-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.about__stack-label {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-foreground-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-mono);
+}
+
 .about__tags {
   display: flex;
   flex-wrap: wrap;
@@ -1836,6 +1863,52 @@ button:focus-visible,
   font-weight: var(--font-weight-light);
 }
 
+/* Placeholder for a future headshot. Dashed border matches the same
+   "not final yet" visual language used on the personal-build project
+   badge. Swap in a real <img class="cta__avatar-photo-img"> and it fills
+   the circle via object-fit — no other CSS changes needed. */
+.cta__avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+}
+
+.cta__avatar-photo {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 1px dashed var(--color-border-hover);
+  background: var(--color-white-02);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.cta__avatar-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.cta__avatar-initials {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-foreground-tertiary);
+  letter-spacing: var(--tracking-mono);
+}
+
+.cta__avatar-caption {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-foreground-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-mono);
+}
+
 .cta__email {
   display: inline-flex;
   align-items: center;
@@ -1873,6 +1946,33 @@ button:focus-visible,
 
 .cta__email:hover .cta__email-arrow {
   transform: translateX(4px);
+}
+
+.cta__whatsapp {
+  margin-top: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.cta__whatsapp-label {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-foreground-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-mono);
+}
+
+.cta__whatsapp-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.cta__whatsapp-btn {
+  font-family: var(--font-mono);
 }
 
 /* =============================================
