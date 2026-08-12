@@ -343,6 +343,40 @@
   </footer>
 
   <!-- ============================================
+       CHATBOT
+       Floating terminal-styled widget, backed by
+       /api/chat (Vercel serverless function -> Gemini).
+       ============================================ -->
+  <div class="chatbot" id="chatbot">
+    <button class="chatbot__toggle" id="chatbotToggle" aria-label="Open chat" aria-expanded="false" aria-controls="chatbotPanel">
+      &gt;_
+    </button>
+
+    <div class="chatbot__panel" id="chatbotPanel" aria-hidden="true">
+      <div class="chatbot__header">
+        <span class="about__dot about__dot--red"></span>
+        <span class="about__dot about__dot--yellow"></span>
+        <span class="about__dot about__dot--green"></span>
+        <span class="chatbot__title">overboard — chat</span>
+        <button type="button" class="chatbot__close" id="chatbotClose" aria-label="Close chat">&times;</button>
+      </div>
+
+      <div class="chatbot__body" id="chatbotBody">
+        <div class="chatbot__message chatbot__message--bot">
+          <span class="chatbot__message-prompt">&gt;</span>
+          <span class="chatbot__message-text">Hey — I'm the Overboard assistant. Ask me about the work, the stack, or how to get in touch.</span>
+        </div>
+      </div>
+
+      <form class="chatbot__input-row" id="chatbotForm">
+        <span class="chatbot__input-prompt">$</span>
+        <input type="text" class="chatbot__input" id="chatbotInput" placeholder="Type a message…" autocomplete="off" />
+      </form>
+      <p class="chatbot__privacy">Powered by AI — avoid sharing sensitive info.</p>
+    </div>
+  </div>
+
+  <!-- ============================================
        SCRIPTS
        ============================================ -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -353,6 +387,7 @@
   <script src="lib/dot-field.js"></script>
   <script src="lib/click-spark.js"></script>
   <script src="lib/scroll-preview.js"></script>
+  <script src="lib/chatbot.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -2121,6 +2121,176 @@ button:focus-visible,
 }
 
 /* =============================================
+   CHATBOT
+   Floating terminal-styled widget, reusing the
+   .about__terminal visual language (dots, mono font,
+   dark panel) rather than a generic chat-bubble UI.
+   ============================================= */
+.chatbot {
+  position: fixed;
+  right: var(--space-6);
+  bottom: calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+  z-index: var(--z-modal);
+}
+
+.chatbot__toggle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1px solid var(--terminal-border);
+  background: var(--terminal-bg);
+  color: var(--color-foreground-primary);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color var(--duration-200) var(--ease-out),
+              transform var(--duration-200) var(--ease-out);
+}
+
+.chatbot__toggle:hover {
+  border-color: var(--terminal-border-hover);
+  transform: translateY(-2px);
+}
+
+.chatbot__panel {
+  position: absolute;
+  bottom: calc(100% + var(--space-3));
+  right: 0;
+  width: 340px;
+  max-width: calc(100vw - var(--space-8));
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--terminal-radius);
+  border: 1px solid var(--terminal-border);
+  background: var(--terminal-bg);
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+  transform-origin: bottom right;
+  pointer-events: none;
+  transition: opacity var(--duration-250) var(--ease-out),
+              transform var(--duration-250) var(--ease-out),
+              visibility var(--duration-250);
+}
+
+.chatbot--open .chatbot__panel {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chatbot__panel {
+    transition: opacity var(--duration-150) linear, visibility var(--duration-150);
+    transform: none !important;
+  }
+}
+
+.chatbot__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--terminal-header-bg);
+}
+
+.chatbot__title {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-foreground-tertiary);
+  margin-left: auto;
+  letter-spacing: var(--tracking-wide);
+}
+
+.chatbot__close {
+  background: none;
+  border: none;
+  color: var(--color-foreground-tertiary);
+  font-size: var(--font-size-lg);
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0 0 var(--space-3);
+}
+
+.chatbot__close:hover {
+  color: var(--color-foreground-primary);
+}
+
+.chatbot__body {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-height: 320px;
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  line-height: var(--leading-loose);
+}
+
+.chatbot__message {
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+}
+
+.chatbot__message-prompt {
+  color: var(--terminal-prompt);
+  flex-shrink: 0;
+}
+
+.chatbot__message--bot .chatbot__message-prompt {
+  color: var(--color-foreground-tertiary);
+}
+
+.chatbot__message-text {
+  color: var(--terminal-output);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.chatbot__input-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.chatbot__input-prompt {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--terminal-prompt);
+}
+
+.chatbot__input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--terminal-cmd);
+}
+
+.chatbot__input::placeholder {
+  color: var(--color-foreground-tertiary);
+}
+
+.chatbot__privacy {
+  padding: 0 var(--space-4) var(--space-3);
+  font-size: 0.65rem;
+  color: var(--color-foreground-tertiary);
+  font-family: var(--font-mono);
+}
+
+/* =============================================
    RESPONSIVE
    ============================================= */
 @media (max-width: 1100px) {
@@ -2296,5 +2466,14 @@ button:focus-visible,
 
   .cta__email-addr {
     font-size: var(--font-size-xl);
+  }
+
+  .chatbot {
+    right: var(--space-4);
+    bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .chatbot__panel {
+    width: calc(100vw - var(--space-8));
   }
 }
