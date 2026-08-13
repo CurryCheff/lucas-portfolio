@@ -6,7 +6,7 @@
 // is loaded as CommonJS by Node at runtime — matches the rest of the repo
 // without touching package.json.
 
-const MODEL = 'gemini-2.5-flash'; // change here if Google renames/deprecates this model
+const MODEL = 'gemini-3.6-flash'; // gemini-2.5-flash returned 404 "no longer available to new users" in production (Aug 2026) — change here if Google renames/deprecates this model again
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
 const SYSTEM_PROMPT = `You are the assistant on Overboard's portfolio site — a small software studio led by Lucas Musungo.
