@@ -94,7 +94,11 @@ module.exports = async function handler(req, res) {
         contents,
         systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
         generationConfig: {
-          maxOutputTokens: 300,
+          // gemini-3.6-flash defaults to "medium" thinking, which eats into
+          // maxOutputTokens before the visible reply — "low" keeps this a
+          // fast, cheap single-turn FAQ bot instead of an agentic reasoner.
+          thinkingConfig: { thinkingLevel: 'low' },
+          maxOutputTokens: 600,
           temperature: 0.7,
         },
       }),
