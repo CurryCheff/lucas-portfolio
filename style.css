@@ -1828,6 +1828,23 @@ button:focus-visible,
   font-weight: var(--font-weight-normal);
 }
 
+/* Hide the band until the tool has published at least one card, so the
+   first publish and every later one run the exact same code path. */
+.testimonials:not(:has(.testimonial)) {
+  display: none;
+}
+
+/* Fewer than 3 cards: center them in a narrower track instead of
+   stretching full-width or sitting stranded in the left column. 3+
+   cards use the default repeat(3, 1fr) grid above; the max-width:1024px
+   breakpoint already collapses to 2 columns and doesn't need this. */
+@media (min-width: 1025px) {
+  .testimonials__track:not(:has(.testimonial:nth-child(3))) {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 356px));
+    justify-content: center;
+  }
+}
+
 /* =============================================
    CTA
    ============================================= */
