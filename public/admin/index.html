@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Testimonials admin — Overboard</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <div id="loginScreen" class="login-screen">
+    <form id="loginForm" class="login-card">
+      <h1>Testimonials admin</h1>
+      <input id="passwordInput" type="password" placeholder="Admin password" autocomplete="current-password" required />
+      <button type="submit">Log in</button>
+      <p id="loginError" class="message message--error state-hidden"></p>
+    </form>
+  </div>
+
+  <div id="dashboard" class="screen state-hidden">
+    <header class="topbar">
+      <h1>Testimonials</h1>
+      <button id="logoutBtn" class="btn btn--ghost">Log out</button>
+    </header>
+
+    <section class="panel">
+      <h2>Mint a submission link</h2>
+      <form id="mintForm" class="row">
+        <input id="clientLabelInput" placeholder="Client label (e.g. Chicken Slice — Tariro)" required />
+        <button type="submit" class="btn">Generate link</button>
+      </form>
+      <p id="mintResult" class="mint-result state-hidden"></p>
+    </section>
+
+    <section class="panel">
+      <div class="row row--between">
+        <h2>Queue</h2>
+        <select id="statusFilter">
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="previewing">Previewing (PR open)</option>
+          <option value="published">Published</option>
+          <option value="rejected">Rejected</option>
+          <option value="all">All</option>
+        </select>
+      </div>
+      <div id="queueList" class="queue-list"></div>
+    </section>
+
+    <section class="panel">
+      <div class="row row--between">
+        <h2>Open batches (awaiting merge)</h2>
+        <button id="refreshBatchesBtn" class="btn btn--ghost">Refresh</button>
+      </div>
+      <div id="batchList" class="batch-list"></div>
+    </section>
+  </div>
+
+  <script src="admin.js"></script>
+  <script>window.initAdminDashboard();</script>
+</body>
+</html>

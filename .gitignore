@@ -1,22 +1,26 @@
 # Dependencies
 node_modules/
-
 # Build output
 dist/
-
 # Logs
 *.log
 npm-debug.log*
-
 # Editor / OS
 .DS_Store
 .vscode/
 .idea/
-
 # Local tooling config
 .claude/
-
 # Env
 .env
 .env.local
 .env.*.local
+# whatsapp-service — separate package.json, own node_modules, live session data
+whatsapp-service/node_modules/
+whatsapp-service/session/
+
+# managed by open-wa
+**.data.json
+**.node-persist**
+**_IGNORE_**
+# end managed by open-wa

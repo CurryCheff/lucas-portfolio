@@ -1,0 +1,13 @@
+{
+  "name": "overboard-whatsapp-service",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Local open-wa companion process — not deployed to Vercel. Exposes POST /send for the testimonials admin tool to call.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node --env-file=.env server.js"
+  },
+  "dependencies": {
+    "@open-wa/wa-automate": "^5.0.0-alpha.8"
+  }
+}

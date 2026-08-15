@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Share your testimonial — Overboard</title>
+  <style>
+    :root {
+      --bg: #0c0c0c;
+      --bg-raised: #141414;
+      --border: rgba(255, 255, 255, 0.12);
+      --fg: #f5f5f5;
+      --fg-secondary: #bbbbbb;
+      --fg-tertiary: #777777;
+      --accent: #ffffff;
+      --error: #ff6b6b;
+      --success: #6bcf8f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      color: var(--fg-secondary);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 24px;
+    }
+    .card {
+      width: 100%;
+      max-width: 480px;
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+    }
+    h1 { color: var(--fg); font-size: 1.3rem; margin: 0 0 4px; }
+    .subtitle { font-size: 0.9rem; color: var(--fg-tertiary); margin: 0 0 24px; }
+    label { display: block; font-size: 0.85rem; color: var(--fg); margin: 16px 0 6px; }
+    label .hint { color: var(--fg-tertiary); font-weight: normal; }
+    input, textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--fg);
+      font-size: 0.95rem;
+      padding: 10px 12px;
+      font-family: inherit;
+    }
+    input:focus, textarea:focus { outline: none; border-color: var(--fg-tertiary); }
+    textarea { min-height: 100px; resize: vertical; }
+    button {
+      margin-top: 24px;
+      width: 100%;
+      background: var(--accent);
+      color: #0c0c0c;
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .message { font-size: 0.85rem; margin-top: 12px; }
+    .message--error { color: var(--error); }
+    .message--success { color: var(--success); }
+    .state-hidden { display: none; }
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 20px 0 0;
+      cursor: pointer;
+    }
+    .checkbox-row input { width: auto; margin-top: 3px; flex-shrink: 0; }
+    .checkbox-row span { font-size: 0.82rem; color: var(--fg-secondary); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div id="formState">
+      <h1>Share your testimonial</h1>
+      <p class="subtitle" id="clientLabelLine">A quick note about working with Overboard.</p>
+
+      <form id="submitForm">
+        <label for="quote">Your testimonial <span class="hint">(20-600 characters)</span></label>
+        <textarea id="quote" name="quote" minlength="20" maxlength="600" required placeholder="What was it like working with us?"></textarea>
+
+        <label for="authorName">Your name</label>
+        <input id="authorName" name="authorName" maxlength="60" required />
+
+        <label for="authorRole">Role / company <span class="hint">(optional)</span></label>
+        <input id="authorRole" name="authorRole" maxlength="80" />
+
+        <label for="phone">Phone number <span class="hint">(optional)</span></label>
+        <input id="phone" name="phone" type="tel" maxlength="40" placeholder="+263 77 123 4567" />
+
+        <label for="email">Email <span class="hint">(optional — for a thank-you note)</span></label>
+        <input id="email" name="email" type="email" maxlength="200" />
+
+        <label class="checkbox-row" for="consent">
+          <input id="consent" name="consent" type="checkbox" required />
+          <span>I consent to this testimonial, including my name, being published on the Overboard website.</span>
+        </label>
+
+        <button type="submit" id="submitBtn">Submit</button>
+        <p id="formMessage" class="message state-hidden"></p>
+      </form>
+    </div>
+
+    <div id="doneState" class="state-hidden">
+      <h1>Thank you!</h1>
+      <p class="subtitle">Your testimonial has been received and is under review.</p>
+    </div>
+
+    <div id="invalidState" class="state-hidden">
+      <h1>Link not valid</h1>
+      <p class="subtitle">This submission link is invalid or has expired. Please ask for a new one.</p>
+    </div>
+  </div>
+
+  <script src="lib/submit.js"></script>
+  <script>window.initSubmitForm();</script>
+</body>
+</html>

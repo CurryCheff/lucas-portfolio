@@ -1762,6 +1762,24 @@ button:focus-visible,
   gap: var(--space-4);
 }
 
+/* Nothing published yet — collapse the section instead of showing an
+   empty bordered bar. */
+.testimonials:not(:has(.testimonial)) {
+  display: none;
+}
+
+/* Graceful centering when the grid isn't a full row of 3 (e.g. between
+   publish batches). */
+.testimonials__track:has(> .testimonial:only-child) {
+  grid-template-columns: minmax(280px, 480px);
+  justify-content: center;
+}
+
+.testimonials__track:has(> .testimonial:nth-child(2):last-child) {
+  grid-template-columns: repeat(2, minmax(260px, 400px));
+  justify-content: center;
+}
+
 .testimonial {
   padding: var(--testimonial-padding);
   border-radius: var(--testimonial-radius);
