@@ -21,9 +21,17 @@
       return { destroy: () => {} };
     }
 
-    // Full running history, sent with every request so the model has
-    // context. In-memory only — nothing persisted, nothing requested.
+    // Running history, sent with every request so the model has context.
+    // In-memory only — nothing persisted, nothing requested. Trimmed to the
+    // last MAX_HISTORY turns so a long session doesn't grow the request
+    // body linearly (the backend caps what it forwards to Gemini too, this
+    // just keeps what we send over the wire bounded).
+    const MAX_HISTORY = 20;
     const messages = [];
+    const pushMessage = (msg) => {
+      messages.push(msg);
+      if (messages.length > MAX_HISTORY) messages.splice(0, messages.length - MAX_HISTORY);
+    };
     let sending = false;
     let open = false;
 
@@ -71,7 +79,7 @@
 
       input.value = '';
       addMessage('user', text);
-      messages.push({ role: 'user', content: text });
+      pushMessage({ role: 'user', content: text });
 
       sending = true;
       input.disabled = true;
@@ -90,7 +98,7 @@
           pendingText.textContent = data.error || 'Something went wrong — try again, or reach out directly.';
         } else {
           pendingText.textContent = data.reply;
-          messages.push({ role: 'model', content: data.reply });
+          pushMessage({ role: 'model', content: data.reply });
         }
       } catch (err) {
         pendingEl.querySelector('.chatbot__message-text').textContent =
