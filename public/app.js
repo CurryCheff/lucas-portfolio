@@ -259,6 +259,23 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollPreviews();
 
   // =============================================
+  // MASKED HEADING (React Bits port — experimental)
+  // =============================================
+  const workMaskedHeading = document.getElementById('workMaskedHeading');
+  if (workMaskedHeading) {
+    initMaskedHeading(workMaskedHeading, {
+      text: 'Recent engagements',
+      src: 'images/masked-heading-source.jpg',
+      grayscale: true,
+      reveal: 'rise',
+      trigger: 'view',
+      textScale: 0.05,
+      tracking: -0.035,
+      lineHeight: 1.08,
+    });
+  }
+
+  // =============================================
   // BENTO CARDS STAGGER
   // =============================================
   document.querySelectorAll('[data-anim="project"]').forEach((card, i) => {
