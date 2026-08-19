@@ -125,7 +125,31 @@ module.exports = async function handler(req, res) {
   }));
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
+
+  // Both a timeout and a client disconnect surface as the same AbortError, so
+  // track which one tripped — otherwise a visitor closing their tab would be
+  // logged as a Gemini timeout, and that's the kind of false signal that
+  // sends you chasing a latency problem that doesn't exist.
+  let abortReason = null;
+  let finished = false;
+
+  const timeout = setTimeout(() => {
+    abortReason = 'timeout';
+    controller.abort();
+  }, GEMINI_TIMEOUT_MS);
+
+  // A reply takes ~15-20s, which is long enough for people to give up and
+  // close the tab. Without this the call runs to completion and writes into
+  // a dead socket, burning quota and function time for nobody.
+  //
+  // The `finished` guard matters: 'close' also fires on normal completion,
+  // and aborting there would be a self-inflicted failure on every request.
+  const onClientGone = () => {
+    if (finished) return;
+    abortReason = 'client-gone';
+    controller.abort();
+  };
+  res.on('close', onClientGone);
 
   try {
     const geminiRes = await fetch(GEMINI_URL, {
@@ -167,6 +191,11 @@ module.exports = async function handler(req, res) {
     res.status(200).json({ reply });
   } catch (err) {
     if (err.name === 'AbortError') {
+      if (abortReason === 'client-gone') {
+        // Nobody is listening — don't try to write to a socket that's gone.
+        console.log('Client disconnected before the reply was ready; upstream call aborted');
+        return;
+      }
       console.error(`Gemini API timed out after ${GEMINI_TIMEOUT_MS}ms`);
       res.status(504).json({ error: 'That took too long to answer — try again, or reach out directly.' });
       return;
@@ -174,6 +203,8 @@ module.exports = async function handler(req, res) {
     console.error('Chat handler error:', err);
     res.status(500).json({ error: 'Something went wrong — try again, or reach out directly.' });
   } finally {
+    finished = true;
+    res.off('close', onClientGone);
     clearTimeout(timeout);
   }
 };
