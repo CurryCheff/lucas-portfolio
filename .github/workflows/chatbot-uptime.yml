@@ -1,0 +1,76 @@
+# Catches silent breakage of the AI chatbot. This already happened once:
+# Google restricted gemini-2.5-flash to pre-existing API keys, /api/chat
+# started 502ing for every visitor, and nothing surfaced it — it was found
+# by chance.
+#
+# Deliberately POSTs a real message to the real /api/chat rather than
+# hitting a dedicated /api/health: a separate health endpoint can pass
+# while the endpoint visitors actually use is broken, and a plain GET
+# wouldn't exercise the Gemini call at all — which is exactly where the
+# model-deprecation failure lives.
+#
+# No secrets needed: /api/chat is public and the project has deployment
+# protection disabled.
+#
+# NOTE: GitHub only runs `schedule:` triggers from the default branch, so
+# this file has to be on main to actually fire.
+
+name: Chatbot uptime
+
+on:
+  schedule:
+    # Every 6 hours. GitHub can delay scheduled runs under load, which is
+    # fine at this cadence. 4 checks/day is negligible against Gemini's
+    # free tier.
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: POST a real message to /api/chat
+        run: |
+          URL="https://lucas-portfolio-smoky.vercel.app/api/chat"
+
+          # --max-time sits above the server's own 35s Gemini timeout, so a
+          # server-side timeout comes back as a real 504 we can report,
+          # rather than curl giving up first and masking it.
+          status=$(curl -s \
+            --max-time 60 \
+            -o response.json \
+            -w '%{http_code}' \
+            -X POST "$URL" \
+            -H 'Content-Type: application/json' \
+            -d '{"messages":[{"role":"user","content":"Uptime check: what projects has Lucas built?"}]}') || status="000"
+
+          echo "HTTP status: $status"
+          echo "--- response body ---"
+          cat response.json 2>/dev/null || echo "(no response body)"
+          echo ""
+          echo "---------------------"
+
+          if [ "$status" != "200" ]; then
+            echo "::error::Chatbot is DOWN — expected HTTP 200 from $URL, got $status. See the response body above."
+            exit 1
+          fi
+
+          # jq ships with ubuntu-latest, but guard anyway: without this, a
+          # missing jq makes the check below report the CHATBOT as degraded
+          # when the real fault is the runner. A monitor that misattributes
+          # its own breakage is one you learn to ignore.
+          if ! command -v jq >/dev/null 2>&1; then
+            echo "::error::MONITOR is broken, not the chatbot — jq is unavailable on this runner. The endpoint returned HTTP 200."
+            exit 1
+          fi
+
+          # A 200 alone isn't enough: the handler returns 200 only on success,
+          # but assert the actual payload so a shape change can't pass silently.
+          reply=$(jq -r '.reply // empty' response.json)
+          if [ -z "$reply" ]; then
+            echo "::error::Chatbot is DEGRADED — got HTTP 200 but no .reply field in the response. See the response body above."
+            exit 1
+          fi
+
+          echo "OK — chatbot replied with ${#reply} characters."

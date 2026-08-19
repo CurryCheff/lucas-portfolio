@@ -21,6 +21,13 @@
       return { destroy: () => {} };
     }
 
+    // Backstop only. Deliberately longer than the server's own 35s Gemini
+    // timeout, so when the server is reachable its more specific message
+    // wins — this exists for the case where the connection itself dies and
+    // the request would otherwise never settle, leaving the input disabled
+    // forever with no way out but a page reload.
+    const REQUEST_TIMEOUT_MS = 45000;
+
     // Running history, sent with every request so the model has context.
     // In-memory only — nothing persisted, nothing requested. Trimmed to the
     // last MAX_HISTORY turns so a long session doesn't grow the request
@@ -85,9 +92,13 @@
       input.disabled = true;
       const pendingEl = addMessage('bot', '…');
 
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
       try {
         const res = await fetch('/api/chat', {
           method: 'POST',
+          signal: controller.signal,
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ messages }),
         });
@@ -102,8 +113,11 @@
         }
       } catch (err) {
         pendingEl.querySelector('.chatbot__message-text').textContent =
-          'Connection issue — try again, or reach out directly.';
+          err.name === 'AbortError'
+            ? 'That took too long — try again, or reach out directly.'
+            : 'Connection issue — try again, or reach out directly.';
       } finally {
+        clearTimeout(timeout);
         sending = false;
         input.disabled = false;
         scrollToBottom();

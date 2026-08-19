@@ -9,6 +9,13 @@
 const MODEL = 'gemini-3.6-flash'; // gemini-2.5-flash returned 404 "no longer available to new users" in production (Aug 2026) — change here if Google renames/deprecates this model again
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
+// Measured production latency is ~15s warm / ~23s cold, so this is set well
+// clear of a normal reply — it exists to convert a genuinely stuck call into
+// our own error JSON, not to cut short a slow-but-working one. Must stay
+// below the maxDuration pinned for this function in vercel.json, otherwise
+// the platform kills us first and the visitor gets Vercel's error page.
+const GEMINI_TIMEOUT_MS = 35000;
+
 const SYSTEM_PROMPT = `You are the assistant on Overboard's portfolio site — a small software studio led by Lucas Musungo.
 
 About Overboard:
@@ -117,9 +124,13 @@ module.exports = async function handler(req, res) {
     parts: [{ text: String(m.content || '').slice(0, 2000) }],
   }));
 
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
+
   try {
     const geminiRes = await fetch(GEMINI_URL, {
       method: 'POST',
+      signal: controller.signal,
       headers: {
         'Content-Type': 'application/json',
         'x-goog-api-key': apiKey,
@@ -155,7 +166,14 @@ module.exports = async function handler(req, res) {
 
     res.status(200).json({ reply });
   } catch (err) {
+    if (err.name === 'AbortError') {
+      console.error(`Gemini API timed out after ${GEMINI_TIMEOUT_MS}ms`);
+      res.status(504).json({ error: 'That took too long to answer — try again, or reach out directly.' });
+      return;
+    }
     console.error('Chat handler error:', err);
     res.status(500).json({ error: 'Something went wrong — try again, or reach out directly.' });
+  } finally {
+    clearTimeout(timeout);
   }
 };
