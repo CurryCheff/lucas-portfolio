@@ -62,4 +62,58 @@ async function sbUpdate(table, query, patch) {
   return res.json();
 }
 
-module.exports = { sbSelect, sbInsert, sbUpdate };
+// Calls a Postgres function exposed via PostgREST's /rpc/ route. Used for
+// the admin_security functions (see the migration) — increments there
+// need to be atomic, not a read-modify-write from this layer.
+async function rpc(fnName, params = {}) {
+  const { url } = config();
+  const res = await fetch(`${url}/rest/v1/rpc/${fnName}`, {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify(params),
+  });
+  if (!res.ok) throw new Error(`Supabase rpc ${fnName} failed: ${res.status} ${await res.text()}`);
+  return res.json();
+}
+
+// --- Validated PostgREST filter builders ---
+//
+// sbSelect/sbUpdate take a raw query string and never encode it. Building
+// that string by hand from user input is exactly how admin-review.js's
+// `id=eq.${id}` became injectable (an `&` adds query params, a `#`
+// truncates the query) — these throw instead of producing a filter for
+// anything that isn't the shape it claims to be. Callers should still
+// validate user input explicitly and return a 400 themselves; treat a
+// throw from these as "this should never happen" (a bug, not bad input),
+// which is exactly what the api/_lib/http.js `handler()` wrapper's 500
+// backstop is for.
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function eqUuid(column, value) {
+  if (typeof value !== 'string' || !UUID_RE.test(value)) {
+    throw new Error(`${column} must be a UUID`);
+  }
+  return `${column}=eq.${value}`;
+}
+
+function eqInt(column, value) {
+  if (!Number.isInteger(value)) {
+    throw new Error(`${column} must be an integer`);
+  }
+  return `${column}=eq.${value}`;
+}
+
+function inUuids(column, values) {
+  if (!Array.isArray(values) || values.length === 0) {
+    throw new Error(`${column} in-list must be a non-empty array`);
+  }
+  for (const value of values) {
+    if (typeof value !== 'string' || !UUID_RE.test(value)) {
+      throw new Error(`${column} in-list contains a non-UUID value`);
+    }
+  }
+  return `${column}=in.(${values.map((value) => `"${value}"`).join(',')})`;
+}
+
+module.exports = { sbSelect, sbInsert, sbUpdate, rpc, eqUuid, eqInt, inUuids, UUID_RE };

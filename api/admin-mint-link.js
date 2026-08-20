@@ -7,14 +7,17 @@
 
 const { requireAdmin } = require('./_lib/admin-token');
 const { issueSubmitToken } = require('./_lib/submit-token');
+const { handler, noStore } = require('./_lib/http');
 
-module.exports = async function handler(req, res) {
+module.exports = handler(async function (req, res) {
+  noStore(res);
+
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
 
-  if (!requireAdmin(req)) {
+  if (!(await requireAdmin(req))) {
     res.status(401).json({ error: 'Unauthorized' });
     return;
   }
@@ -36,4 +39,4 @@ module.exports = async function handler(req, res) {
 
   const base = process.env.PUBLIC_SITE_URL || `https://${req.headers.host}`;
   res.status(200).json({ link: `${base}/submit.html?t=${token}` });
-};
+});

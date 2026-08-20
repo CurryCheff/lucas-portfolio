@@ -3,26 +3,33 @@
 // approval itself has committed (never send a thank-you for a decision
 // that didn't actually persist), then a batch publish is attempted (a
 // no-op if under threshold — see _lib/publish-batch.js).
+//
+// Wrapped in api/_lib/http.js's `handler()`, so any DB/network failure
+// below — not just the ones with an explicit try/catch — is caught and
+// turned into a clean 500 with an errorId, never an unhandled rejection.
 
 const { requireAdmin } = require('./_lib/admin-token');
-const { sbSelect, sbUpdate } = require('./_lib/supabase');
+const { sbSelect, sbUpdate, eqUuid, UUID_RE } = require('./_lib/supabase');
 const { sendThankYou } = require('./_lib/notify-thankyou');
 const { runPublishBatch } = require('./_lib/publish-batch');
+const { handler, noStore } = require('./_lib/http');
 
-module.exports = async function handler(req, res) {
+module.exports = handler(async function (req, res) {
+  noStore(res);
+
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
 
-  if (!requireAdmin(req)) {
+  if (!(await requireAdmin(req))) {
     res.status(401).json({ error: 'Unauthorized' });
     return;
   }
 
   const { id, decision, rejectionNote } = req.body || {};
-  if (typeof id !== 'string' || !id) {
-    res.status(400).json({ error: 'id is required' });
+  if (typeof id !== 'string' || !UUID_RE.test(id)) {
+    res.status(400).json({ error: 'id must be a valid UUID' });
     return;
   }
   if (decision !== 'approve' && decision !== 'reject') {
@@ -30,7 +37,7 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  const existing = await sbSelect('testimonials', `id=eq.${id}&limit=1`);
+  const existing = await sbSelect('testimonials', `${eqUuid('id', id)}&limit=1`);
   const row = existing[0];
   if (!row) {
     res.status(404).json({ error: 'Submission not found' });
@@ -42,7 +49,7 @@ module.exports = async function handler(req, res) {
   }
 
   if (decision === 'reject') {
-    await sbUpdate('testimonials', `id=eq.${id}`, {
+    await sbUpdate('testimonials', eqUuid('id', id), {
       status: 'rejected',
       rejected_reason: typeof rejectionNote === 'string' ? rejectionNote.slice(0, 500) : null,
     });
@@ -51,7 +58,7 @@ module.exports = async function handler(req, res) {
   }
 
   // decision === 'approve'
-  await sbUpdate('testimonials', `id=eq.${id}`, {
+  await sbUpdate('testimonials', eqUuid('id', id), {
     status: 'approved',
     approved_at: new Date().toISOString(),
   });
@@ -75,4 +82,4 @@ module.exports = async function handler(req, res) {
   }
 
   res.status(200).json({ ok: true, status: 'approved', thankYou, publish });
-};
+});

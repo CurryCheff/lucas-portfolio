@@ -22,6 +22,16 @@ function createRateLimiter({ windowMs = 5 * 60 * 1000, max = 10 } = {}) {
     const timestamps = (requestLog.get(ip) || []).filter((t) => now - t < windowMs);
     timestamps.push(now);
     requestLog.set(ip, timestamps);
+
+    // Without this, requestLog grows by one entry per distinct IP for the
+    // life of a warm instance, even for IPs that stopped sending requests
+    // long ago — an unbounded, never-reclaimed Map on a long-lived lambda.
+    if (requestLog.size > 500) {
+      for (const [key, value] of requestLog) {
+        if (value.every((t) => now - t >= windowMs)) requestLog.delete(key);
+      }
+    }
+
     return timestamps.length > max;
   };
 }

@@ -85,13 +85,19 @@ function handleApi(name, query, req, res) {
 
     const shim = {
       _status: 200,
+      _headers: {},
+      headersSent: false,
+      setHeader(name, value) {
+        this._headers[name] = value;
+      },
       status(code) {
         this._status = code;
         return this;
       },
       json(obj) {
-        res.writeHead(this._status, { 'Content-Type': 'application/json' });
+        res.writeHead(this._status, { 'Content-Type': 'application/json', ...this._headers });
         res.end(JSON.stringify(obj));
+        this.headersSent = true;
       },
     };
 
@@ -136,6 +142,7 @@ http
     console.log('  env vars (presence only):');
     [
       'ADMIN_PASSWORD',
+      'ADMIN_SESSION_SECRET',
       'SUBMIT_LINK_SECRET',
       'SUPABASE_URL',
       'SUPABASE_SERVICE_ROLE_KEY',

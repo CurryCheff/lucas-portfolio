@@ -57,9 +57,16 @@ async function sendThankYou({ submissionId, authorName, quote, contactEmail, con
     const waResult = await whatsapp.sendWhatsApp({ phone: contactPhone, message });
     if (waResult.ok) {
       result.whatsapp = true;
-      await sbUpdate('testimonials', `id=eq.${submissionId}`, {
-        thank_you_sent_whatsapp_at: new Date().toISOString(),
-      });
+      try {
+        await sbUpdate('testimonials', `id=eq.${submissionId}`, {
+          thank_you_sent_whatsapp_at: new Date().toISOString(),
+        });
+      } catch (err) {
+        // The WhatsApp message already sent — a failure to record the
+        // timestamp shouldn't throw out of a function whose whole
+        // contract is "never throws" (see the header comment above).
+        console.error('notify-thankyou: failed to record whatsapp timestamp:', err.message);
+      }
     } else {
       // Expected condition (machine off/tunnel down), not an error to
       // surface to the admin — logged for visibility only.

@@ -18,18 +18,12 @@
     sessionStorage.removeItem(TOKEN_KEY);
   }
 
-  async function authedFetch(path, options = {}) {
-    const res = await fetch(path, {
-      ...options,
-      headers: {
-        ...(options.body ? { 'Content-Type': 'application/json' } : {}),
-        Authorization: `Bearer ${getToken()}`,
-        ...options.headers,
-      },
-    });
-    return res;
-  }
-
+  // Safe for TEXT-NODE contexts only (e.g. interpolated inside innerHTML
+  // between tags). NOT safe inside an attribute like href="..." — this
+  // escapes via textContent -> innerHTML, which never escapes a literal
+  // `"`. Anywhere a value needs to land in an attribute, build the
+  // element with createElement/.href/.textContent instead (see
+  // renderBatchItem below) rather than reaching for this.
   function escapeText(str) {
     const div = document.createElement('div');
     div.textContent = str || '';
@@ -54,6 +48,42 @@
     const refreshBatchesBtn = document.getElementById('refreshBatchesBtn');
     const batchList = document.getElementById('batchList');
 
+    // Single 401 interceptor. Every authed call goes through here, so an
+    // expired TTL or a session revoked elsewhere (another tab logging
+    // out — see admin-logout.js, which invalidates every outstanding
+    // token, not just the one that requested the logout) forces the user
+    // back to the login screen with an explanation, instead of five
+    // separate call sites each rendering "Unauthorized" as if it were an
+    // ordinary data-loading error.
+    async function authedFetch(path, options = {}) {
+      const res = await fetch(path, {
+        ...options,
+        headers: {
+          ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+          Authorization: `Bearer ${getToken()}`,
+          ...options.headers,
+        },
+      });
+      if (res.status === 401) {
+        forceLogout('Your session expired — please log in again.');
+      }
+      return res;
+    }
+
+    // Empties everything that could hold submitter PII (emails, phone
+    // numbers) or a live, weeks-valid submission link. Logging out used
+    // to only hide #dashboard with a CSS class — the rendered queue and
+    // any freshly-minted link stayed in the document the whole time,
+    // recoverable via devtools.
+    function clearSensitiveDom() {
+      queueList.innerHTML = '';
+      batchList.innerHTML = '';
+      mintResult.textContent = '';
+      mintResult.classList.add('state-hidden');
+      passwordInput.value = '';
+      clientLabelInput.value = '';
+    }
+
     function showDashboard() {
       loginScreen.classList.add('state-hidden');
       dashboard.classList.remove('state-hidden');
@@ -64,6 +94,22 @@
     function showLogin() {
       dashboard.classList.add('state-hidden');
       loginScreen.classList.remove('state-hidden');
+    }
+
+    // Clears local session state and any sensitive DOM content, then
+    // returns to the login screen. `message`, if given, is shown as the
+    // login screen's notice — used for both an explicit logout click and
+    // a 401 caught by authedFetch above.
+    function forceLogout(message) {
+      clearToken();
+      clearSensitiveDom();
+      showLogin();
+      if (message) {
+        loginError.textContent = message;
+        loginError.classList.remove('state-hidden');
+      } else {
+        loginError.classList.add('state-hidden');
+      }
     }
 
     async function onLoginSubmit(e) {
@@ -85,9 +131,19 @@
       showDashboard();
     }
 
-    function onLogout() {
-      clearToken();
-      showLogin();
+    async function onLogout() {
+      // Revokes the session server-side (bumps the shared epoch, see
+      // api/admin-logout.js) so the token stops working everywhere, not
+      // just here — a real revocation, not just clearing this tab's
+      // sessionStorage. Local state is cleared either way even if this
+      // request fails (e.g. offline), since there's nothing more useful
+      // to do locally at that point.
+      try {
+        await authedFetch('/api/admin-logout', { method: 'POST' });
+      } catch (err) {
+        // Network failure — fall through to clearing local state anyway.
+      }
+      forceLogout();
     }
 
     async function onMintSubmit(e) {
@@ -99,8 +155,10 @@
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        mintResult.textContent = data.error || 'Could not create link';
-        mintResult.classList.remove('state-hidden');
+        if (res.status !== 401) {
+          mintResult.textContent = data.error || 'Could not create link';
+          mintResult.classList.remove('state-hidden');
+        }
         return;
       }
       mintResult.textContent = data.link;
@@ -115,7 +173,17 @@
 
       const top = document.createElement('div');
       top.className = 'queue-item__top';
-      top.innerHTML = `<span class="queue-item__name">${escapeText(row.author_name || row.client_name)}</span><span class="badge">${row.status}</span>`;
+
+      const nameEl = document.createElement('span');
+      nameEl.className = 'queue-item__name';
+      nameEl.textContent = row.author_name || row.client_name;
+
+      const statusEl = document.createElement('span');
+      statusEl.className = 'badge';
+      statusEl.textContent = row.status;
+
+      top.appendChild(nameEl);
+      top.appendChild(statusEl);
       el.appendChild(top);
 
       if (row.quote) {
@@ -162,7 +230,7 @@
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        window.alert(data.error || 'Review failed');
+        if (res.status !== 401) window.alert(data.error || 'Review failed');
         return;
       }
       if (decision === 'approve' && data.publish && data.publish.published) {
@@ -177,7 +245,9 @@
       const res = await authedFetch(`/api/admin-queue?status=${encodeURIComponent(statusFilter.value)}`);
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        queueList.innerHTML = `<p class="empty-state">${escapeText(data.error || 'Could not load queue')}</p>`;
+        if (res.status !== 401) {
+          queueList.innerHTML = `<p class="empty-state">${escapeText(data.error || 'Could not load queue')}</p>`;
+        }
         return;
       }
       queueList.innerHTML = '';
@@ -188,10 +258,34 @@
       data.submissions.forEach((row) => queueList.appendChild(renderQueueItem(row)));
     }
 
+    // batch.prUrl is DB/GitHub-origin (not directly submitter-controlled),
+    // but this is built as a real anchor element rather than interpolated
+    // into innerHTML — escapeText is only safe in text-node contexts (see
+    // its own comment above); it does not escape `"`, so it would be
+    // unsafe inside href="...". The scheme+host check is defense in depth
+    // on top of that.
     function renderBatchItem(batch) {
       const el = document.createElement('div');
       el.className = 'batch-item';
-      el.innerHTML = `<div class="queue-item__top"><a href="${escapeText(batch.prUrl)}" target="_blank" rel="noopener">PR #${batch.prNumber}</a><span class="badge badge--warn">${batch.itemCount} item(s)</span></div>`;
+
+      const top = document.createElement('div');
+      top.className = 'queue-item__top';
+
+      const link = document.createElement('a');
+      link.target = '_blank';
+      link.rel = 'noopener';
+      if (typeof batch.prUrl === 'string' && batch.prUrl.startsWith('https://github.com/')) {
+        link.href = batch.prUrl;
+      }
+      link.textContent = `PR #${batch.prNumber}`;
+
+      const countEl = document.createElement('span');
+      countEl.className = 'badge badge--warn';
+      countEl.textContent = `${batch.itemCount} item(s)`;
+
+      top.appendChild(link);
+      top.appendChild(countEl);
+      el.appendChild(top);
 
       const mergeBtn = document.createElement('button');
       mergeBtn.className = 'btn';
@@ -212,7 +306,7 @@
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        window.alert(data.error || 'Merge failed');
+        if (res.status !== 401) window.alert(data.error || 'Merge failed');
         return;
       }
       window.alert('Merged.');
@@ -224,7 +318,9 @@
       const res = await authedFetch('/api/admin-publish');
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        batchList.innerHTML = `<p class="empty-state">${escapeText(data.error || 'Could not load batches')}</p>`;
+        if (res.status !== 401) {
+          batchList.innerHTML = `<p class="empty-state">${escapeText(data.error || 'Could not load batches')}</p>`;
+        }
         return;
       }
       batchList.innerHTML = '';

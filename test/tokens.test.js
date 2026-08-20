@@ -1,7 +1,13 @@
 // Token domain separation — the load-bearing test for admin-token.js /
 // submit-token.js. See ~/.claude/skills/collect-review-publish/references/security-patterns.md rule 2.
+//
+// Deeper admin-token coverage (TTL, epoch revocation, secret-split
+// behavior) lives in test/admin-auth.test.js — kept separate since those
+// tests are specifically about the hardening pass, not the base domain
+// separation this file has always covered.
 
-process.env.ADMIN_PASSWORD = 'test-admin-password';
+process.env.ADMIN_PASSWORD = 'test-admin-password-123';
+process.env.ADMIN_SESSION_SECRET = 'b'.repeat(64);
 process.env.SUBMIT_LINK_SECRET = 'a'.repeat(64);
 
 const test = require('node:test');
@@ -9,18 +15,24 @@ const assert = require('node:assert');
 const adminToken = require('../api/_lib/admin-token');
 const submitToken = require('../api/_lib/submit-token');
 
+// verifyToken now needs a live session_epoch to compare against, which
+// normally means a DB read (see admin-security.js). Every test here
+// injects a fixed reader instead, so this file never touches Supabase.
+const EPOCH = 1;
+const readEpoch = async () => EPOCH;
+
 test('an admin token is not accepted as a submit token', () => {
-  const token = adminToken.issueToken();
+  const token = adminToken.issueToken(EPOCH);
   assert.equal(submitToken.verifySubmitToken(token), null);
 });
 
-test('a submit token is not accepted as an admin token', () => {
+test('a submit token is not accepted as an admin token', async () => {
   const token = submitToken.issueSubmitToken('some-client');
-  assert.equal(adminToken.verifyToken(token), false);
+  assert.equal(await adminToken.verifyToken(token, { readEpoch }), false);
 });
 
-test('round-trips still work', () => {
-  assert.equal(adminToken.verifyToken(adminToken.issueToken()), true);
+test('round-trips still work', async () => {
+  assert.equal(await adminToken.verifyToken(adminToken.issueToken(EPOCH), { readEpoch }), true);
 
   const claims = submitToken.verifySubmitToken(submitToken.issueSubmitToken('some-client'));
   assert.equal(claims.clientLabel, 'some-client');
@@ -44,14 +56,22 @@ test('tampering with the client label invalidates the signature', () => {
   assert.equal(submitToken.verifySubmitToken(`${forged}.${hmac}`), null);
 });
 
-test('verification FAILS CLOSED when the secret is missing', () => {
-  const token = adminToken.issueToken();
+test('admin token verification FAILS CLOSED when ADMIN_SESSION_SECRET is missing', async () => {
+  const token = adminToken.issueToken(EPOCH);
+  const saved = process.env.ADMIN_SESSION_SECRET;
+  delete process.env.ADMIN_SESSION_SECRET;
+
+  assert.equal(await adminToken.verifyToken(token, { readEpoch }), false);
+  assert.throws(() => adminToken.issueToken(EPOCH), /ADMIN_SESSION_SECRET is not set/);
+
+  process.env.ADMIN_SESSION_SECRET = saved;
+});
+
+test('checkPassword FAILS CLOSED when ADMIN_PASSWORD is missing', () => {
   const saved = process.env.ADMIN_PASSWORD;
   delete process.env.ADMIN_PASSWORD;
 
-  assert.equal(adminToken.verifyToken(token), false);
   assert.equal(adminToken.checkPassword(''), false);
-  assert.throws(() => adminToken.issueToken(), /ADMIN_PASSWORD is not set/);
 
   process.env.ADMIN_PASSWORD = saved;
 });
@@ -66,16 +86,19 @@ test('a too-short link secret is refused rather than used', () => {
   process.env.SUBMIT_LINK_SECRET = saved;
 });
 
-test('garbage input never throws', () => {
+test('garbage input never throws', async () => {
   for (const bad of [null, undefined, '', 'x', 'x.y', 123, {}, 'a.b.c']) {
-    assert.equal(adminToken.verifyToken(bad), false);
+    assert.equal(await adminToken.verifyToken(bad, { readEpoch }), false);
     assert.equal(submitToken.verifySubmitToken(bad), null);
   }
 });
 
-test('requireAdmin reads the Bearer header correctly', () => {
-  const token = adminToken.issueToken();
-  assert.equal(adminToken.requireAdmin({ headers: { authorization: `Bearer ${token}` } }), true);
-  assert.equal(adminToken.requireAdmin({ headers: { authorization: `${token}` } }), false);
-  assert.equal(adminToken.requireAdmin({ headers: {} }), false);
+test('requireAdmin reads the Bearer header correctly', async () => {
+  const token = adminToken.issueToken(EPOCH);
+  assert.equal(
+    await adminToken.requireAdmin({ headers: { authorization: `Bearer ${token}` } }, { readEpoch }),
+    true
+  );
+  assert.equal(await adminToken.requireAdmin({ headers: { authorization: `${token}` } }, { readEpoch }), false);
+  assert.equal(await adminToken.requireAdmin({ headers: {} }, { readEpoch }), false);
 });

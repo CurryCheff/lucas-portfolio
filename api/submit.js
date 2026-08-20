@@ -16,6 +16,11 @@ const { getClientIp, createRateLimiter } = require('./_lib/rate-limit');
 const isRateLimited = createRateLimiter({ windowMs: 5 * 60 * 1000, max: 10 });
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Loose E.164-ish check: optional leading +, 7-15 digits, spaces/dashes/
+// parens allowed for readability but stripped before the length check.
+// This value is later forwarded to the WhatsApp service as-is, so it's
+// worth rejecting obvious garbage here rather than only at the far end.
+const PHONE_RE = /^\+?[\d\s\-()]{7,20}$/;
 
 function clamp(str, min, max) {
   const trimmed = String(str || '').trim();
@@ -60,13 +65,28 @@ module.exports = async function handler(req, res) {
     res.status(400).json({ error: 'Name must be between 2 and 60 characters.' });
     return;
   }
-  const cleanAuthorRole = authorRole ? clamp(authorRole, 1, 80) : null;
+  let cleanAuthorRole = null;
+  if (authorRole) {
+    cleanAuthorRole = clamp(authorRole, 1, 80);
+    if (!cleanAuthorRole) {
+      res.status(400).json({ error: 'Role/company must be 80 characters or fewer.' });
+      return;
+    }
+  }
   const cleanEmail = email ? String(email).trim().slice(0, 200) : null;
   if (cleanEmail && !EMAIL_RE.test(cleanEmail)) {
     res.status(400).json({ error: "That email address doesn't look right." });
     return;
   }
-  const cleanPhone = phone ? String(phone).trim().slice(0, 40) : null;
+  let cleanPhone = null;
+  if (phone) {
+    cleanPhone = String(phone).trim();
+    if (!PHONE_RE.test(cleanPhone)) {
+      res.status(400).json({ error: "That phone number doesn't look right." });
+      return;
+    }
+    cleanPhone = cleanPhone.slice(0, 40);
+  }
 
   const nowIso = new Date().toISOString();
 
